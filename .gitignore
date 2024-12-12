@@ -84,9 +84,6 @@ data/raw/
 data/processed/
 
 # Output files
-reports/
-*.pdf
-*.pptx
 
 # IDEs and editors
 .vscode/
