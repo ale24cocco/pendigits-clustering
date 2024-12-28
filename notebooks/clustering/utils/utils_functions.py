@@ -2,31 +2,47 @@ import numpy as np
 import pandas as pd
 import os
 from sklearn.datasets import fetch_openml
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import pairwise_distances
 
 #funzione per calcolare l'sse di un clustering
 class Utils_functions():
     
-    
-    def compute_sse(X, labels):
+
+    def compute_SSE(X, labels):
         """
-        Calcola la somma delle distanze quadrate (SSE) 
-        dei punti dai centroidi dei rispettivi cluster.
-        Esclude -1 (noise) se presente.
-        Restituisce un singolo float.
-        """
-        unique_labels = set(labels)
-        if -1 in unique_labels:
-            unique_labels.remove(-1)
-            
-        sse = 0.0
-        for cluster in unique_labels:
-            cluster_points = X[labels == cluster]
-            if len(cluster_points) == 0:
-                continue
-            centroid = np.mean(cluster_points, axis=0)
-            sse += np.sum((cluster_points - centroid)**2)
+        Calcola la Somma degli Errori Quadratici (SSE) per un generico clustering.
         
-        return float(sse)
+        Parametri
+        ----------
+        X : array-like, shape (n_samples, n_features)
+            Dati
+        labels : array-like, shape (n_samples,)
+            Etichette dei cluster assegnate ad ogni campione
+        
+        Ritorna
+        -------
+        sse : float
+            Somma degli errori quadratici
+        """
+        sse = 0.0
+        unique_labels = np.unique(labels)
+        for label in unique_labels:
+            # Salta l'etichetta 'rumore' (-1 in DBSCAN), se presente
+            if label == -1:
+                continue
+            
+            cluster_points = X[labels == label]
+            if cluster_points.size == 0:
+                continue
+            centroid = cluster_points.mean(axis=0)
+            
+            # Distanze dei punti del cluster dal proprio centroide
+            distances = pairwise_distances(cluster_points, [centroid], metric='euclidean')
+            sse += np.sum(distances ** 2)
+        
+        return sse
     
     
     def load_data():
@@ -73,4 +89,25 @@ class Utils_functions():
             df.to_csv("../../data/raw/pendigits.csv", index = False)
     
         return X, y
+    
+    
+    def process_data(X):
+        
+        scaler = StandardScaler()
+
+        #standardizzo i dati (media 0 e varianza 1)
+        X_std = scaler.fit_transform(X)
+
+        #normalizzo i dati (valori tra 0 e 1)
+        X_norm = (X - X.min()) / (X.max() - X.min())
+
+        #applico pca con 8 componenti principali
+        pca = PCA(n_components=8)
+        X_pca = pca.fit_transform(X_std)
+
+        #creo una lista con i tre dataset
+        datasets = [X, X_std, X_norm, X_pca]
+        datasets_names = ["Raw", "Standardized", "Normalized", "Extracted"]
+        
+        return datasets, datasets_names
 
