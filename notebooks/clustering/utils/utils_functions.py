@@ -8,6 +8,9 @@ from sklearn.metrics import pairwise_distances
 from kneed import KneeLocator  
 import matplotlib.pyplot as plt
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.metrics import homogeneity_score, completeness_score, v_measure_score
+from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
+from sklearn.cluster import DBSCAN
 
 #funzione per calcolare l'sse di un clustering
 class Utils_functions():
@@ -202,5 +205,45 @@ class Utils_functions():
         plt.grid(True)
         plt.show()
 
+    def find_optimal_params_dbscan(X, y, eps_params, min_samples_params):
+        """
+        Cerca i parametri ottimali (eps e min_samples) su una griglia definita da
+        eps_params e min_samples_params, massimizzando la media delle metriche.
+        """
+        best_eps = None
+        best_min_samples = None
+        best_score = -1
 
+        # Genero i valori di eps e min_samples
+        # eps_params = [start_eps, end_eps, step_eps]
+        eps_values = np.arange(eps_params[0], eps_params[1] + eps_params[2], eps_params[2])
+        # min_samples_params = [start_ms, end_ms, step_ms]
+        ms_values = np.arange(min_samples_params[0], min_samples_params[1] + min_samples_params[2], min_samples_params[2])
+        
+        for eps in eps_values:
+            for ms in ms_values:
+                dbscan = DBSCAN(eps=eps, min_samples=ms)
+                labels = dbscan.fit_predict(X)
+                
+                # Se DBSCAN mette tutti i punti come rumore o un singolo cluster,
+                # silhouette_score fallisce. Verifichiamo:
+                unique_labels = np.unique(labels)
+                if len(unique_labels) < 2:
+                    continue
+                
+                ari = adjusted_rand_score(y, labels)
+                nmi = normalized_mutual_info_score(y, labels)
+                hom = homogeneity_score(y, labels)
+                comp = completeness_score(y, labels)
+                vms = v_measure_score(y, labels)
+
+                #faccio la media delle metriche
+                score = (ari + nmi + hom + comp + vms) / 5
+                
+                if score > best_score:
+                    best_score = score
+                    best_eps = eps
+                    best_min_samples = ms
+        
+        return best_eps, best_min_samples, best_score
     
