@@ -61,9 +61,9 @@ class Utils_functions():
         """
     
         #se il dataset è già presente lo carico
-        if os.path.isfile("../../data/raw/pendigits.csv"):
+        if os.path.isfile("../data/raw/pendigits.csv"):
             
-            ds = pd.read_csv("../../data/raw/pendigits.csv")
+            ds = pd.read_csv("../data/raw/pendigits.csv")
             
             #estraggo le features e i targets
             X = ds.drop(columns = "target")
@@ -94,7 +94,7 @@ class Utils_functions():
             df['target'] = y
             
             #salvo il dataframe in formato csv
-            df.to_csv("../../data/raw/pendigits.csv", index = False)
+            df.to_csv("../data/raw/pendigits.csv", index = False)
     
         return X, y
     
