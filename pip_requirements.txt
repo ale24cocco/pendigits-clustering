@@ -1,5 +1,0 @@
-kneed==0.8.5
-numpy==2.2.1
-scipy==1.14.1
-setuptools==75.6.0
-wheel==0.45.1
