@@ -150,9 +150,9 @@ class Utils_functions():
         X_norm = (X - X.min()) / (X.max() - X.min())
         
         #cerco il numero di componenti principali necessarie per spiegare almeno il 90% della varianza
-        n_components = Utils_functions.choose_optimal_pca_components(X, variance_threshold)
+        n_components = Utils_functions.choose_optimal_pca_components(X_std, variance_threshold)
 
-        #applico pca con 8 componenti principali
+        #applico pca componenti principali
         pca = PCA(n_components = n_components)
         X_pca = pca.fit_transform(X_std)
 
