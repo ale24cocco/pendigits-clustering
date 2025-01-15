@@ -16,9 +16,13 @@ Di seguito sono riportate le istruzioni per configurare l'ambiente di sviluppo, 
 
 1. Assicurati di avere Anaconda o Miniconda installato.
 2. Esegui il seguente comando per creare un ambiente Conda e installare le dipendenze:
+
     ```bash
     conda env create -f environment.yml
     ```
+
+    **Il file environmet.yml si trova nella cartella environment**
+
 3. Attiva l'ambiente:
     ```bash
     conda activate pendigits-clustering
@@ -40,9 +44,12 @@ Di seguito sono riportate le istruzioni per configurare l'ambiente di sviluppo, 
         venv\Scripts\activate
         ```
 3. Installa i requisiti usando `pip`:
+
     ```bash
     pip install -r requirements.txt
     ```
+
+    **Il file requirements.txt si trova nella cartella environment**
 
 ## Struttura della Cartella
 
