@@ -247,3 +247,40 @@ class Utils_functions():
         
         return best_eps, best_min_samples, best_score
     
+    def plot_explained_variance(X):
+        """
+        Visualizza l'andamento della varianza spiegata dalle componenti principali.
+        """
+        # Standardizzazione dei dati
+        scaler = StandardScaler()
+        X_std = scaler.fit_transform(X)
+
+        # PCA
+        pca = PCA()
+        pca.fit(X_std)
+
+        # Varianza spiegata e cumulativa
+        explained_variance_ratio = pca.explained_variance_ratio_
+        cumulative_variance = np.cumsum(explained_variance_ratio)
+
+        # Grafico
+        plt.figure(figsize=(10, 6))
+        plt.plot(
+            range(1, len(explained_variance_ratio) + 1), 
+            cumulative_variance, 
+            marker='o', linestyle='--', label='Varianza cumulativa'
+        )
+        plt.bar(
+            range(1, len(explained_variance_ratio) + 1), 
+            explained_variance_ratio, 
+            alpha=0.6, label='Varianza spiegata per componente'
+        )
+
+        plt.axhline(y=0.9, color='r', linestyle='--', label='Soglia 90%')
+        plt.xlabel('Numero di componenti principali')
+        plt.ylabel('Varianza spiegata')
+        plt.title('Varianza spiegata dalle componenti principali')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+    
